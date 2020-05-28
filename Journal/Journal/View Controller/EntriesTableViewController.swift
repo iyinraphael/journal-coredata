@@ -24,7 +24,9 @@ class EntriesTableViewController: UITableViewController {
     // MARK: - Action
     
     @objc private func createEntry() {
-        present(UINavigationController(rootViewController: CreateEntryViewController()), animated: true, completion: nil)
+        let vc = UINavigationController(rootViewController: CreateEntryViewController())
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true, completion: nil)
     }
     
     // MARK: - Table view data source
