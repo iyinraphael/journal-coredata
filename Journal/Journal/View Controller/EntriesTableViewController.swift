@@ -88,8 +88,11 @@ class EntriesTableViewController: UITableViewController {
         }
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let entry = fetchResultController.object(at: indexPath)
+        let vc = EntryViewController()
+        vc.entry = entry
+        present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
     }
 
 }

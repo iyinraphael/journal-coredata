@@ -52,16 +52,19 @@ class EntryTableViewCell: UITableViewCell {
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        titleLabel.isUserInteractionEnabled = false
         stackView2.addArrangedSubview(titleLabel)
         
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        timestampLabel.translatesAutoresizingMaskIntoConstraints = false
         timestampLabel.font = .systemFont(ofSize: 14)
         timestampLabel.setContentHuggingPriority(.init(rawValue: 1000.0), for: .horizontal)
+        timestampLabel.isUserInteractionEnabled = false
         stackView2.addArrangedSubview(timestampLabel)
         
         bodyTextView.translatesAutoresizingMaskIntoConstraints = false
         bodyTextView.font = .systemFont(ofSize: 16)
         bodyTextView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        bodyTextView.isUserInteractionEnabled = false
         stackView.addArrangedSubview(bodyTextView)
         
         NSLayoutConstraint.activate([
