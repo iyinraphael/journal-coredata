@@ -13,7 +13,7 @@ import CoreData
 extension Entry {
     
     @discardableResult convenience init(title: String,
-                                        bodyText: String?,
+                                        bodyText: String? = nil,
                                         timestamp: Date = Date(),
                                         identifier: UUID = UUID(),
                                         context: NSManagedObjectContext = CoreDataStack.shared.mainContext) {

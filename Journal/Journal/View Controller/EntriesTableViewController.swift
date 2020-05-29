@@ -7,9 +7,12 @@
 //
 
 import UIKit
+import CoreData
 
 class EntriesTableViewController: UITableViewController {
 
+    // MARK: - View Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -17,11 +20,26 @@ class EntriesTableViewController: UITableViewController {
         navigationItem.largeTitleDisplayMode = .always
         title = "Journal"
         
+        tableView.register(EntryTableViewCell.self, forCellReuseIdentifier: EntryTableViewCell.reusIdentifier)
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.square"), style: .plain, target: self, action: #selector(createEntry))
         navigationController?.navigationBar.prefersLargeTitles = true
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
     // MARK: - Action
+    var entries: [Entry] {
+        let fetchRequest: NSFetchRequest<Entry> = Entry.fetchRequest()
+        let context = CoreDataStack.shared.mainContext
+        do {
+            return try context.fetch(fetchRequest)
+        } catch {
+            NSLog( "Error fetching task: \(error)")
+            return []
+        }
+    }
     
     @objc private func createEntry() {
         let vc = UINavigationController(rootViewController: CreateEntryViewController())
@@ -31,45 +49,34 @@ class EntriesTableViewController: UITableViewController {
     
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+
+        return entries.count
     }
 
-    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: EntryTableViewCell.reusIdentifier, for: indexPath) as? EntryTableViewCell else {return UITableViewCell()}
+        cell.entry =  entries[indexPath.row]
 
         return cell
     }
-    */
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            let entry = entries[indexPath.row]
+            let context = CoreDataStack.shared.mainContext
+            context.delete(entry)
+            do {
+                try context.save()
+            } catch {
+                context.reset()
+                NSLog("Error saving managed object context (delete task: \(error)")
+            }
             tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
-    */
 
     /*
     // Override to support rearranging the table view.

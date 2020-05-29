@@ -14,12 +14,20 @@ class EntryTableViewCell: UITableViewCell {
     let titleLabel = UILabel()
     let timestampLabel = UILabel()
     let bodyTextView = UITextView()
+    var entry: Entry?{
+        didSet{
+            updateView()
+        }
+    }
     
     // MARK: - Initialize
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setUpviews()
     }
+    
+    static let reusIdentifier = "cell"
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -29,14 +37,14 @@ class EntryTableViewCell: UITableViewCell {
     
     private func setUpviews() {
         let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = true
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fill
-        self.addSubview(stackView)
+        addSubview(stackView)
         
         let stackView2 = UIStackView()
-        stackView2.translatesAutoresizingMaskIntoConstraints = true
+        stackView2.translatesAutoresizingMaskIntoConstraints = false
         stackView2.axis = .horizontal
         stackView2.alignment = .fill
         stackView2.distribution = .fillProportionally
@@ -53,16 +61,35 @@ class EntryTableViewCell: UITableViewCell {
         
         bodyTextView.translatesAutoresizingMaskIntoConstraints = false
         bodyTextView.font = .systemFont(ofSize: 16)
-        bodyTextView.setContentHuggingPriority(.init(rawValue: 249.0), for: .vertical)
+        bodyTextView.setContentHuggingPriority(.defaultLow, for: .vertical)
         stackView.addArrangedSubview(bodyTextView)
         
         NSLayoutConstraint.activate([
+            
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            stackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            stackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            
+            bodyTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 1),
+            bodyTextView.heightAnchor.constraint(equalToConstant: 100)
+            
+            
         ])
         
+        
+    }
+    
+    private func updateView() {
+        guard let entry = entry else {return}
+        
+        let df = DateFormatter()
+        df.dateStyle = .full
+
+        
+        titleLabel.text = entry.title
+        timestampLabel.text = df.string(from: entry.timestamp ?? Date())
+        bodyTextView.text = entry.bodyText
         
     }
     
