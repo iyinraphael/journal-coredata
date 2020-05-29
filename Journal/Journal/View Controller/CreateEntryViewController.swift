@@ -59,7 +59,7 @@ class CreateEntryViewController: UIViewController {
         labelPriority.text = "Priority"
         stackView3.addArrangedSubview(labelPriority)
         
-        let segmentedControl = UISegmentedControl(items: Mood.allCases)
+        let segmentedControl = UISegmentedControl(items: [Mood.normal.rawValue, Mood.sad.rawValue, Mood.happy.rawValue])
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
         stackView3.addArrangedSubview(segmentedControl)
