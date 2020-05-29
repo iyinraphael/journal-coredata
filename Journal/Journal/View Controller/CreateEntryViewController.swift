@@ -13,7 +13,7 @@ class CreateEntryViewController: UIViewController {
     // MARK: - Properties
     var titleTextField: UITextField?
     var bodyTextView: UITextView?
-    
+    var segmentedControl: UISegmentedControl?
     
     // MARK: - View
     
@@ -45,6 +45,25 @@ class CreateEntryViewController: UIViewController {
         titleTextField.placeholder = "Jorunal Entry Title"
         stackView.addArrangedSubview(titleTextField)
         self.titleTextField = titleTextField
+        
+        let stackView3 = UIStackView()
+        stackView3.translatesAutoresizingMaskIntoConstraints = false
+        stackView3.axis = .vertical
+        stackView3.alignment = .fill
+        stackView3.distribution = .fill
+        stackView3.spacing = 2.0
+        stackView.addArrangedSubview(stackView3)
+        
+        let labelPriority = UILabel()
+        labelPriority.translatesAutoresizingMaskIntoConstraints = false
+        labelPriority.text = "Priority"
+        stackView3.addArrangedSubview(labelPriority)
+        
+        let segmentedControl = UISegmentedControl(items: Mood.allCases)
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.selectedSegmentIndex = 0
+        stackView3.addArrangedSubview(segmentedControl)
+        self.segmentedControl = segmentedControl
         
         let stackView2 = UIStackView()
         stackView2.translatesAutoresizingMaskIntoConstraints = false
@@ -90,11 +109,12 @@ class CreateEntryViewController: UIViewController {
     }
     
     @objc private func save() {
-        guard let title = titleTextField?.text, !title.isEmpty else {
-            return
-        }
+        guard let title = titleTextField?.text, !title.isEmpty,
+        let priorityIndex = segmentedControl?.selectedSegmentIndex else {return}
         
-        Entry(title: title, bodyText: bodyTextView?.text)
+        let priority = Mood.allCases[priorityIndex]
+        
+        Entry(title: title, bodyText: bodyTextView?.text, mood: priority)
         do {
             try CoreDataStack.shared.mainContext.save()
         } catch {
