@@ -19,6 +19,8 @@
 		EB410694247F51ED008CD478 /* Entry+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB410693247F51ED008CD478 /* Entry+Convenience.swift */; };
 		EB410697247F96F7008CD478 /* Journal.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB410695247F96F7008CD478 /* Journal.xcdatamodeld */; };
 		EB41069B2481CD03008CD478 /* EntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB41069A2481CD03008CD478 /* EntryViewController.swift */; };
+		EBA0659424858EAD00026E73 /* EntryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA0659324858EAD00026E73 /* EntryController.swift */; };
+		EBA0659624858FF600026E73 /* EntryRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA0659524858FF600026E73 /* EntryRepresentation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		EB410696247F96F7008CD478 /* Journal.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Journal.xcdatamodel; sourceTree = "<group>"; };
 		EB4106992481ABAE008CD478 /* Journal 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Journal 2.xcdatamodel"; sourceTree = "<group>"; };
 		EB41069A2481CD03008CD478 /* EntryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryViewController.swift; sourceTree = "<group>"; };
+		EBA0659324858EAD00026E73 /* EntryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryController.swift; sourceTree = "<group>"; };
+		EBA0659524858FF600026E73 /* EntryRepresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryRepresentation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +73,7 @@
 		EB410671247F4DA7008CD478 /* Journal */ = {
 			isa = PBXGroup;
 			children = (
+				EBA0659224858E6E00026E73 /* Model Controller */,
 				EB410690247F51AC008CD478 /* Models */,
 				EB41068D247F517D008CD478 /* View */,
 				EB410686247F50C3008CD478 /* View Controller */,
@@ -106,8 +111,17 @@
 				EB410691247F51CD008CD478 /* CoreDataStack.swift */,
 				EB410693247F51ED008CD478 /* Entry+Convenience.swift */,
 				EB410695247F96F7008CD478 /* Journal.xcdatamodeld */,
+				EBA0659524858FF600026E73 /* EntryRepresentation.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		EBA0659224858E6E00026E73 /* Model Controller */ = {
+			isa = PBXGroup;
+			children = (
+				EBA0659324858EAD00026E73 /* EntryController.swift */,
+			);
+			path = "Model Controller";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,6 +195,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB410692247F51CD008CD478 /* CoreDataStack.swift in Sources */,
+				EBA0659624858FF600026E73 /* EntryRepresentation.swift in Sources */,
+				EBA0659424858EAD00026E73 /* EntryController.swift in Sources */,
 				EB41069B2481CD03008CD478 /* EntryViewController.swift in Sources */,
 				EB41068F247F51A4008CD478 /* EntryTableViewCell.swift in Sources */,
 				EB410677247F4DA7008CD478 /* ViewController.swift in Sources */,
