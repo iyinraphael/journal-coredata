@@ -12,7 +12,7 @@ import CoreData
 class EntriesTableViewController: UITableViewController {
     
     // MARK: - Property
-    let entryConterller = EntryController()
+    let entryController = EntryController()
 
     // MARK: - View Cycle
     
@@ -48,7 +48,7 @@ class EntriesTableViewController: UITableViewController {
         let vc = UINavigationController(rootViewController: CreateEntryViewController())
         vc.modalPresentationStyle = .fullScreen
         guard let creatView = vc.viewControllers.first as? CreateEntryViewController else { return }
-        creatView.entryController = entryConterller
+        creatView.entryController = entryController
         present(vc, animated: true, completion: nil)
     }
     
@@ -80,14 +80,16 @@ class EntriesTableViewController: UITableViewController {
         if editingStyle == .delete {
            //  Delete the row from the data source
             let entry = fetchResultController.object(at: indexPath)
-
-            let context = CoreDataStack.shared.mainContext
-            context.delete(entry)
-            do {
-                try context.save()
-            } catch {
-                context.reset()
-                NSLog("Error saving managed object context (delete task: \(error)")
+             let context = CoreDataStack.shared.mainContext
+            
+            entryController.deleteEntryFromServer(entry: entry) { result in
+                context.delete(entry)
+                do {
+                    try context.save()
+                } catch {
+                    context.reset()
+                    NSLog("Error saving managed object context (delete task: \(error)")
+                }
             }
         }
     }
