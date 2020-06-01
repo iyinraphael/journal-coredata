@@ -14,6 +14,7 @@ class CreateEntryViewController: UIViewController {
     var titleTextField: UITextField?
     var bodyTextView: UITextView?
     var segmentedControl: UISegmentedControl?
+    var entryController: EntryController?
     
     // MARK: - View
     
@@ -111,14 +112,19 @@ class CreateEntryViewController: UIViewController {
     @objc private func save() {
         guard let title = titleTextField?.text, !title.isEmpty,
         let priorityIndex = segmentedControl?.selectedSegmentIndex else {return}
-        
         let priority = Mood.allCases[priorityIndex]
         
-        Entry(title: title, bodyText: bodyTextView?.text, mood: priority)
-        do {
-            try CoreDataStack.shared.mainContext.save()
-        } catch {
-            NSLog("Unable to save Entry: \(error)")
+        let entry = Entry(title: title, bodyText: bodyTextView?.text, mood: priority)
+        
+        entryController?.sendEntryToServer(entry: entry) { result in
+            guard let _ = try? result.get() else { return}
+            
+            do {
+                try CoreDataStack.shared.mainContext.save()
+            } catch {
+                NSLog("Unable to save Entry: \(error)")
+            }
+            
         }
         dismiss(animated: true, completion: nil)
     }

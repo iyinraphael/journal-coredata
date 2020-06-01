@@ -10,6 +10,9 @@ import UIKit
 import CoreData
 
 class EntriesTableViewController: UITableViewController {
+    
+    // MARK: - Property
+    let entryConterller = EntryController()
 
     // MARK: - View Cycle
     
@@ -44,6 +47,8 @@ class EntriesTableViewController: UITableViewController {
     @objc private func createEntry() {
         let vc = UINavigationController(rootViewController: CreateEntryViewController())
         vc.modalPresentationStyle = .fullScreen
+        guard let creatView = vc.viewControllers.first as? CreateEntryViewController else { return }
+        creatView.entryController = entryConterller
         present(vc, animated: true, completion: nil)
     }
     
@@ -84,7 +89,6 @@ class EntriesTableViewController: UITableViewController {
                 context.reset()
                 NSLog("Error saving managed object context (delete task: \(error)")
             }
-            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
 
