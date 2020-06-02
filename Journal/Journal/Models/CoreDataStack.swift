@@ -35,6 +35,7 @@ class CoreDataStack {
         context.performAndWait {
             do {
                 try context.save()
+                context.automaticallyMergesChangesFromParent = true
             } catch let fetchError {
                 error = fetchError
                 NSLog("Error occured saving context to Core Data\(fetchError)")

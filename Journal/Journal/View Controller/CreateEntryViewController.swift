@@ -120,11 +120,11 @@ class CreateEntryViewController: UIViewController {
             
             guard let _ = try? result.get() else { return}
             
-            let context = CoreDataStack.shared.mainContext
+            let context = CoreDataStack.shared.container.newBackgroundContext()
             
             context.performAndWait {
                 do {
-                    try CoreDataStack.shared.mainContext.save()
+                    try CoreDataStack.shared.save(context: context)
                 } catch {
                     NSLog("Unable to save Entry: \(error)")
                 }

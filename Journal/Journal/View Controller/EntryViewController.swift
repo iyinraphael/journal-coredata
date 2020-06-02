@@ -15,6 +15,7 @@ class EntryViewController: UIViewController {
     var bodyTextView: UITextView?
     var segmentedControl: UISegmentedControl?
     var entry: Entry?
+    var entryController: EntryController?
     var wasEdited: Bool? = false
        
        // MARK: - View
@@ -28,15 +29,35 @@ class EntryViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if wasEdited == true {
-
+        
+        guard let entry = entry else { return }
+        
+        guard let title = titleTextField?.text, !title.isEmpty,
+            let moodIndex = segmentedControl?.selectedSegmentIndex
+            else { return}
+            
+        let mood = Mood.allCases[moodIndex]
+        
+        entry.title = title
+        entry.bodyText = bodyTextView?.text
+        entry.mood = mood.rawValue
+        entryController?.sendEntryToServer(entry: entry)
+        do {
+          
+            try CoreDataStack.shared.mainContext.save()
+            
+        } catch {
+            
+            NSLog("Error editing and saving etntry")
         }
+        
+        
     }
     private func setUpView() {
         view.backgroundColor = .white
         title = "Entry Details"
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(setEditing))
+        navigationItem.rightBarButtonItem =  editButtonItem
         
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -120,14 +141,15 @@ class EntryViewController: UIViewController {
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
-        if editing == true {
+        super.setEditing(editing, animated: animated)
+        if editing {
             wasEdited = true
-            
+        }
+        
             titleTextField?.isUserInteractionEnabled = editing
             bodyTextView?.isUserInteractionEnabled = editing
             segmentedControl?.isUserInteractionEnabled = editing
             navigationItem.hidesBackButton = editing
-        }
     }
 
 }
