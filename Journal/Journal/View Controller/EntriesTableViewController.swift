@@ -83,12 +83,15 @@ class EntriesTableViewController: UITableViewController {
              let context = CoreDataStack.shared.mainContext
             
             entryController.deleteEntryFromServer(entry: entry) { result in
-                context.delete(entry)
-                do {
-                    try context.save()
-                } catch {
-                    context.reset()
-                    NSLog("Error saving managed object context (delete task: \(error)")
+                
+                DispatchQueue.main.async {
+                    context.delete(entry)
+                    do {
+                        try context.save()
+                    } catch {
+                        context.reset()
+                        NSLog("Error saving managed object context (delete task: \(error)")
+                    }
                 }
             }
         }

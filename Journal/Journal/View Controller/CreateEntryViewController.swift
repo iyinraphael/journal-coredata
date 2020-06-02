@@ -117,12 +117,17 @@ class CreateEntryViewController: UIViewController {
         let entry = Entry(title: title, bodyText: bodyTextView?.text, mood: priority)
         
         entryController?.sendEntryToServer(entry: entry) { result in
+            
             guard let _ = try? result.get() else { return}
             
-            do {
-                try CoreDataStack.shared.mainContext.save()
-            } catch {
-                NSLog("Unable to save Entry: \(error)")
+            let context = CoreDataStack.shared.mainContext
+            
+            context.performAndWait {
+                do {
+                    try CoreDataStack.shared.mainContext.save()
+                } catch {
+                    NSLog("Unable to save Entry: \(error)")
+                }
             }
             
         }

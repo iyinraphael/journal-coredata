@@ -131,26 +131,38 @@ class EntryController {
         let representationsID = Dictionary(uniqueKeysWithValues: zip(identifiersToFetch, representations))
         var entryToCreate = representationsID
         
-        let fetchRequest: NSFetchRequest<Entry> = Entry.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "identifier IN %@", identifiersToFetch)
+        let context = CoreDataStack.shared.container.newBackgroundContext()
         
-        let context = CoreDataStack.shared.mainContext
+        var error: Error?
         
-        let existing = try context.fetch(fetchRequest)
-        
-        for entry in existing {
-            guard let id = entry.identifier,
-                let representation = representationsID[id] else { continue }
+        context.performAndWait {
             
-            self.update(entry: entry, entryRepresentation: representation)
-            entryToCreate.removeValue(forKey: id)
+            let fetchRequest: NSFetchRequest<Entry> = Entry.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "identifier IN %@", identifiersToFetch)
+            
+            do {
+                let existing = try context.fetch(fetchRequest)
+                
+                for entry in existing {
+                    guard let id = entry.identifier,
+                        let representation = representationsID[id] else { continue }
+                    
+                    self.update(entry: entry, entryRepresentation: representation)
+                    entryToCreate.removeValue(forKey: id)
+                }
+                
+            } catch let fetchError {
+                error = fetchError
+            }
+        
+            
+            for representation in entryToCreate.values {
+                Entry(entryRepresentation: representation, context: context)
+            }
         }
         
-        for representation in entryToCreate.values {
-            Entry(entryRepresentation: representation, context: context)
-        }
-        
-        try context.save()
+        if let error = error { throw error}
+        try CoreDataStack.shared.save(context: context)
     }
     
 }
