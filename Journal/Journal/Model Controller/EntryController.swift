@@ -26,7 +26,9 @@ class EntryController {
     
     init() {
         
+        fetchEntriesFromServer()
     }
+    
     
     func sendEntryToServer(entry: Entry, completion: @escaping CompleteHandler = { _ in }) {
         guard let uuid = entry.identifier else {
@@ -60,6 +62,7 @@ class EntryController {
         }.resume()
     }
     
+    
     func deleteEntryFromServer(entry: Entry, completion: @escaping CompleteHandler = { _ in }) {
         guard let uuid = entry.identifier else {
                    completion(.failure(.noIdentifier))
@@ -80,6 +83,74 @@ class EntryController {
                    }
                    completion(.success(true))
                }.resume()
+    }
+    
+    
+    func fetchEntriesFromServer(with completion: @escaping CompleteHandler = { _ in }) {
+        let requestURL = baseURL.appendingPathExtension("json")
+        var request = URLRequest(url: requestURL)
+        request.httpMethod = "GET"
+        
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            if let error = error {
+                NSLog("Error occured getting request: \(error)")
+                completion(.failure(.otherError))
+            }
+            
+            guard let data = data else {
+                NSLog("Error occured and go no data back from Firebase")
+                completion(.failure(.noData))
+                return
+            }
+            
+            do {
+                let entriesRepresentations = Array(try JSONDecoder().decode([String : EntryRepresentation].self, from: data).values)
+                try self.updateEntries(with: entriesRepresentations)
+            } catch {
+                NSLog("Error occured decoding data: \(error)")
+                completion(.failure(.faliedDecode))
+            }
+            
+            completion(.success(true))
+            
+        }.resume()
+        
+    }
+   
+    
+    private func update(entry: Entry, entryRepresentation: EntryRepresentation) {
+        entry.title = entryRepresentation.title
+        entry.bodyText = entryRepresentation.bodyText
+        entry.timestamp = entryRepresentation.timestamp
+        entry.mood = entryRepresentation.mood
+    }
+  
+    
+    private func updateEntries(with representations: [EntryRepresentation]) throws {
+        let identifiersToFetch = representations.compactMap { UUID(uuidString: $0.identifier)}
+        let representationsID = Dictionary(uniqueKeysWithValues: zip(identifiersToFetch, representations))
+        var entryToCreate = representationsID
+        
+        let fetchRequest: NSFetchRequest<Entry> = Entry.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "identifier IN %@", identifiersToFetch)
+        
+        let context = CoreDataStack.shared.mainContext
+        
+        let existing = try context.fetch(fetchRequest)
+        
+        for entry in existing {
+            guard let id = entry.identifier,
+                let representation = representationsID[id] else { continue }
+            
+            self.update(entry: entry, entryRepresentation: representation)
+            entryToCreate.removeValue(forKey: id)
+        }
+        
+        for representation in entryToCreate.values {
+            Entry(entryRepresentation: representation, context: context)
+        }
+        
+        try context.save()
     }
     
 }
